@@ -1,0 +1,55 @@
+we are using jfrog which was running on the internal Cloud missions
+In that JFrog artifactory we used to store Maven artifacts Docker images Helen charts and many other artifacts.
+For the CI we used to download Maven dependencies Maven plugins node packages python packages and depending on the source code we used to pull other packages to also Docker images Helm charts which will be created as a part of cacd pipeline were also pushed to the same artifactory.
+
+on the flip sidekubernetes cluster which was running on the internal Cloud again was connected to the jfrog to pull the images and to deploy the application but in the beginning of the project number of micro Services onboarded were very less and managing K8's cluster and as well as jfrog was not challenging but once we started onboarding many services from multiple teams it was quite difficult and tricky to manage kubernetes cluster and as well as jfrog
+
+so that's where client decided to move on to the public Cloud once that decision was taken we got few clusters created in public Cloud but there was one problem with the jfrog the jfrog had a lot of artifacts due to which the migration of jfrog was not easy and it was bit time consuming as well so that's the reason client postponed jfrog migration onto the public Cloud but till then the plan was to pull the images from internal jfrog onto the public Cloud
+
+K8's clusters few applications team started deploying the applications but they were complaining about the image pull was too slow. it was expected because jfrog and K8's clusters were there in the two different networks jfrog was there in the internal cloud and K8 cluster were there in the public Cloud. To solve the image full-time issues we came up with one more idea to have a nginx as a reverse proxy plus caching which will be running in the public cloud and pointed to the jflow which is running in the internal cloud and KH cluster which is running in the public
+Cloud will be pointed to NJ index so now with this setup all the image pull requests from KH will be sent to the nginx now nginx will gonna check the cache if the image is present in the cache then it will be served directly from the NJ in X but if the image is not there so then the request will be redirected to the G4 if any image which is not there in the nginx caching will be directly pulled from the jfrog internal cloud and served to the KH cluster and also after the image pull is done all the image layers will be cached in the NJ NX because of which the first pool will be always slower but further pulls of the same image will be faster because already all the image layers will be available in the nginx caching and this is where we wanted to write in script which will read all the image names from the jfrog which is running inside internal cloud and pull the images via ncnx machine to fill up the cachet so that application teams will not face any latency issues while pulling the images onto the cage clusters and this script also had a logic to check whether the same image is pulled twice what will be the time difference between the first pull and this input and parallely we had one more script which will be executed on daily basis which reads the newer images from the jfront and pull the images via njmx and this crypto also helps us in filling up the cache though it was a very small script but it was very important to reduce the image pull time and it is not necessary that you will gonna always be involved in the big scripts the script might be smaller but it is very important in perspective to the project
+
+
+#!/bin/bash
+
+# Set JFrog and Nginx details
+JFROG_BASE_URL="https://internal-jfrog-url"
+NGINX_BASE_URL="http://nginx-machine-url"
+
+# Function to pull image via Nginx and measure time difference
+pull_and_measure_time() {
+    image_name="$1"
+    
+    # Pull image via Nginx and measure time difference
+    start_time=$(date +%s)
+    docker pull "${NGINX_BASE_URL}/${image_name}"
+    end_time=$(date +%s)
+    
+    # Calculate time difference
+    time_diff=$((end_time - start_time))
+    
+    echo "Image: $image_name, Time Difference: ${time_diff} seconds"
+}
+
+# Function to read image names from JFrog
+read_image_names() {
+    # Replace the following command with the actual command to get image names from JFrog
+    jfrog_image_list_command="curl -s ${JFROG_BASE_URL}/api/v1/images"
+    image_names=$(eval $jfrog_image_list_command)
+    echo "${image_names}"
+}
+
+# Main script logic
+main() {
+    # Read image names from JFrog
+    images=$(read_image_names)
+
+    # Loop through each image and pull via Nginx
+    IFS=$'\n'
+    for image in ${images}; do
+        pull_and_measure_time "${image}"
+    done
+}
+
+# Execute the main script logic
+main
