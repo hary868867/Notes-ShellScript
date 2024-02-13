@@ -1,0 +1,84 @@
+shell scripting
+
+#!/bin/bash  indicates that the file must be run by an bash interpreter. there are other interpreters like z shell annd sh. any file that is written on z shell and sh will be interpreted and executed by bash because of this command.
+what is meant by interpreter in the first hand - it just reads the files line by line from top to bottom and execute it. 
+
+
+
+grep 'thing you want to grep' 'filename.extension'                      // it will search for the thing you want and prints the output
+grep 'thing you want to grep' 'filename.extension' > path/filename      // this command will push the output to a filename file you have given 
+
+if we use 'mkdir reports' and if the reports directory already exits, the interpreter will throw error, for that not to happen we can use -p Ie. 'mkdir -p reports', it will not throw error now, but dont know if it re-creates or tracks and knows it already exists 
+
+directory=reports [ this cmd will give a variable named directory with the value of reports. we can it putting $ in front of directory ie.$directory ] 
+$directory        [ usage ] 
+$1                [ if we use $1 in script, we need give value after the cmd ] 
+
+shell variables doesnt have a data type,  they just simply store data
+
+echo uses directly and can mistakenly print anything you just type echo, so its better to use printf than echo. after giving variable, we need to use %s in place of variable. for example if we need to know USER we need to give // print "%s/n" $USER.  [ /n adds extra line ] 
+
+for the if-then-else conditions in shell script, if it is a single line, a semi colon for the each statement is needed, if we write statements one by one, then no semi colon is needed.
+
+there are three types of variables. local, environment and command line variables. local are given for the local use where the file exists, environment used for whole environment and command line variables are instant commands 
+
+environment varibles - can be used on the whole environment 
+lets say we have java17 installed in our machine in folder1. we have written java code file there & we ran the code, while running the code java should use the java17 executable file and provide us the output, now as it is in same folder it will run properly, but when we create a java program in folder 2 and execute. it will not work as there no executable file there, thats why we need to set environment variable so that java program uses java executable file anywhere from the environment.
+
+
+about declare :
+ANSIBLE_CONFIG=/etc/hosts     [ he set a normal variable which can generally use by using $ ]
+declare -p ANSIBLE_CONFIG     [ it does declare a variable, -p does soemthing, but dont what it is ] [ -x declares it as env variable and -r declares it as constant, a constant mean a variable which cannot be changed ] 
+declare -xr ANSIBLE_CONFIG    [ it does set ANSIBLE_CONFIG as constant env varible which we cannot change it later on ]
+
+
+functions:
+syntax for the functions
+
+function function_name (){
+echo hello
+}
+
+calling the function : just give function name, it will the whole.
+
+-------- 
+
+need to know about the arguments in shell scripting 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
